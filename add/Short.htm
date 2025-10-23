@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание  Денис </title>
+    <style>
+        /* Основные переменные для стиля iOS 26 с Liquid Glass */
+        :root {
+            --ios-liquid-glass: rgba(255, 255, 255, 0.15);
+            --ios-primary: #007AFF;
+            --ios-background: linear-gradient(135deg, rgba(224, 231, 255, 0.6), rgba(209, 224, 252, 0.6));
+            --ios-cell-bg: rgba(255, 255, 255, 0.3);
+            --ios-border: rgba(0, 0, 0, 0.05);
+            --ios-text-primary: #000000;
+            --ios-text-secondary: #8E8E93;
+            --ios-blue-light: #5AC8FA;
+            --ios-green: #34C759;
+            --ios-indigo: #5856D6;
+            --ios-orange: #FF9500;
+            --ios-pink: #FF2D55;
+            --blur-radius: 30px;
+            --fluid-animation: 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+            --corner-radius: 18px;
+            --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+            background: var(--ios-background);
+            color: var(--ios-text-primary);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+            min-height: 100vh;
+            backdrop-filter: blur(var(--blur-radius));
+            -webkit-backdrop-filter: blur(var(--blur-radius));
+            overflow-x: hidden;
+        }
+        
+        header {
+            text-align: center;
+            background-color: var(--ios-liquid-glass);
+            color: var(--ios-text-primary);
+            padding: 20px 15px;
+            border-radius: var(--corner-radius);
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-glass);
+            border: 1px solid var(--ios-border);
+            backdrop-filter: blur(var(--blur-radius));
+            -webkit-backdrop-filter: blur(var(--blur-radius));
+            position: relative;
+            overflow: hidden;
+            transition: transform var(--fluid-animation);
+        }
+        
+        header:hover {
+            transform: scale(1.02);
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: -60%;
+            left: -60%;
+            width: 220%;
+            height: 220%;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 80%);
+            z-index: 0;
+            animation: fluid-glow 5s infinite alternate ease-in-out;
+        }
+        
+        @keyframes fluid-glow {
+            0% { transform: translate(0, 0); opacity: 0.5; }
+            100% { transform: translate(10%, 10%); opacity: 0.8; }
+        }
+        
+        header > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.6px;
+        }
+        
+        .subtitle {
+            margin: 6px 0 0;
+            font-size: 1.1rem;
+            color: var(--ios-text-secondary);
+            font-weight: 400;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--ios-liquid-glass);
+            padding: 20px;
+            border-radius: var(--corner-radius);
+            box-shadow: var(--shadow-glass);
+            border: 1px solid var(--ios-border);
+            backdrop-filter: blur(var(--blur-radius));
+            -webkit-backdrop-filter: blur(var(--blur-radius));
+            transition: all var(--fluid-animation);
+        }
+        
+        .container:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 14px 0;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            border-radius: var(--corner-radius);
+            font-weight: 600;
+            transition: all var(--fluid-animation);
+            flex: 1;
+            min-width: 70px;
+            background-color: var(--ios-liquid-glass);
+            color: var(--ios-text-primary);
+            box-shadow: var(--shadow-glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+            pointer-events: none;
+            border-radius: var(--corner-radius);
+            transition: opacity var(--fluid-animation);
+        }
+        
+        button:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.2);
+        }
+        
+        button:hover::after {
+            opacity: 0.7;
+        }
+        
+        button.active {
+            background-color: var(--ios-primary);
+            color: white;
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+        }
+        
+        .schedule {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+        }
+        
+        .schedule.show {
+            display: block;
+            animation: fluidFadeIn 0.5s ease-out forwards;
+        }
+        
+        @keyframes fluidFadeIn {
+            from { opacity: 0; transform: translateY(15px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 15px 0;
+            border-radius: var(--corner-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-glass);
+            background-color: var(--ios-liquid-glass);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        th, td {
+            border: none;
+            border-bottom: 1px solid var(--ios-border);
+            padding: 16px 14px;
+            font-size: 1.1rem;
+            text-align: left;
+        }
+        
+        th:last-child, td:last-child {
+            border-right: none;
+        }
+        
+        tr:last-child td {
+            border-bottom: none;
+        }
+        
+        th {
+            background-color: rgba(242, 242, 247, 0.5);
+            color: var(--ios-text-secondary);
+            font-weight: 600;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+        
+        th:first-child, td:first-child {
+            text-align: center;
+            width: 70px;
+            font-weight: 500;
+        }
+        
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        
+        tr:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transition: background-color 0.3s ease;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--ios-text-secondary);
+            font-size: 1rem;
+            padding: 12px;
+            border-radius: var(--corner-radius);
+            background-color: var(--ios-liquid-glass);
+            backdrop-filter: blur(var(--blur-radius));
+            -webkit-backdrop-filter: blur(var(--blur-radius));
+            box-shadow: var(--shadow-glass);
+        }
+        
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+            header {
+                padding: 15px 10px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+            .container {
+                padding: 15px;
+            }
+            .buttons {
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+            button {
+                padding: 12px 0;
+                font-size: 1rem;
+                min-width: 60px;
+            }
+            th, td {
+                padding: 14px 12px;
+                font-size: 1rem;
+            }
+            footer {
+                font-size: 0.9rem;
+                margin-top: 25px;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            button {
+                padding: 10px 0;
+                font-size: 0.95rem;
+            }
+            th, td {
+                padding: 12px 10px;
+                font-size: 0.95rem;
+            }
+        }
+        
+        .school-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--ios-liquid-glass);
+            border-radius: var(--corner-radius);
+            box-shadow: var(--shadow-glass);
+        }
+        
+        .school-logo {
+            width: 80px;
+            height: auto;
+        }
+        
+        .school-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .student-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .class-name {
+            font-size: 1rem;
+            color: var(--ios-text-secondary);
+        }
+        
+        .center-title {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .total-hours {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: var(--corner-radius);
+        }
+        
+        .lunch-row {
+            background-color: rgba(255, 255, 255, 0.3);
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .time-column {
+            width: 120px;
+            text-align: center;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Расписание</h1>
+        <div class="subtitle"> Денис </div>
+    </header>
+    
+    <div class="container">
+        <!-- <div class="school-header">
+            <img src="https://via.placeholder.com/80x80?text=НААШ" alt="Логотип школы" class="school-logo">
+            <div class="school-info"> -->
+                <!-- <div class="student-name"> Денис </div> -->
+                <!-- <div class="class-name">Центрики</div> -->
+            <!-- </div>
+        </div> -->
+        
+        <div class="buttons">
+            <button onclick="showDay('pn')" class="active">Пн</button>
+            <button onclick="showDay('vt')">Вт</button>
+            <button onclick="showDay('sr')">Ср</button>
+            <button onclick="showDay('cht')">Чт</button>
+            <button onclick="showDay('pt')">Пт</button>
+        </div>
+        
+        <!-- Расписание по дням -->
+        <div id="pn" class="schedule show">
+            <table>
+                <tr>
+                    <th>Время</th>
+                    <th>Понедельник</th>
+                    <th>Вторник</th>
+                    <th>Среда</th>
+                    <th>Четверг</th>
+                    <th>Пятница</th>
+                </tr>
+                <tr class="lunch-row">
+                    <td colspan="6">Обед</td>
+                </tr>
+                <tr>
+                    <td class="time-column">13:20–13:50</td>
+                    <td>Портфолио</td>
+                    <td></td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>ИТ-лаборатория</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:00–14:30</td>
+                    <td></td>
+                    <td>Бассейн</td>
+                    <td>Сказка</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:40–15:10</td>
+                    <td>Спортчас</td>
+                    <td></td>
+                    <td>Театр</td>
+                    <td>Логика</td>
+                    <td>Разв.игры</td>
+                </tr>
+                <tr>
+                    <td class="time-column">15:20–16:00</td>
+                    <td>Анг.яз.</td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>Анг.яз.</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <!-- <tr>
+                    <td colspan="6" class="total-hours">11 часов</td>
+                </tr> -->
+            </table>
+        </div>
+        
+        <div id="vt" class="schedule">
+            <table>
+                <tr>
+                    <th>Время</th>
+                    <th>Понедельник</th>
+                    <th>Вторник</th>
+                    <th>Среда</th>
+                    <th>Четверг</th>
+                    <th>Пятница</th>
+                </tr>
+                <tr class="lunch-row">
+                    <td colspan="6">Обед</td>
+                </tr>
+                <tr>
+                    <td class="time-column">13:20–13:50</td>
+                    <td>Портфолио</td>
+                    <td></td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>ИТ-лаборатория</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:00–14:30</td>
+                    <td></td>
+                    <td>Бассейн</td>
+                    <td>Сказка</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:40–15:10</td>
+                    <td>Спортчас</td>
+                    <td></td>
+                    <td>Театр</td>
+                    <td>Логика</td>
+                    <td>Разв.игры</td>
+                </tr>
+                <tr>
+                    <td class="time-column">15:20–16:00</td>
+                    <td>Анг.яз.</td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>Анг.яз.</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="total-hours">11 часов</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="sr" class="schedule">
+            <table>
+                <tr>
+                    <th>Время</th>
+                    <th>Понедельник</th>
+                    <th>Вторник</th>
+                    <th>Среда</th>
+                    <th>Четверг</th>
+                    <th>Пятница</th>
+                </tr>
+                <tr class="lunch-row">
+                    <td colspan="6">Обед</td>
+                </tr>
+                <tr>
+                    <td class="time-column">13:20–13:50</td>
+                    <td>Портфолио</td>
+                    <td></td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>ИТ-лаборатория</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:00–14:30</td>
+                    <td></td>
+                    <td>Бассейн</td>
+                    <td>Сказка</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:40–15:10</td>
+                    <td>Спортчас</td>
+                    <td></td>
+                    <td>Театр</td>
+                    <td>Логика</td>
+                    <td>Разв.игры</td>
+                </tr>
+                <tr>
+                    <td class="time-column">15:20–16:00</td>
+                    <td>Анг.яз.</td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>Анг.яз.</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="total-hours">11 часов</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="cht" class="schedule">
+            <table>
+                <tr>
+                    <th>Время</th>
+                    <th>Понедельник</th>
+                    <th>Вторник</th>
+                    <th>Среда</th>
+                    <th>Четверг</th>
+                    <th>Пятница</th>
+                </tr>
+                <tr class="lunch-row">
+                    <td colspan="6">Обед</td>
+                </tr>
+                <tr>
+                    <td class="time-column">13:20–13:50</td>
+                    <td>Портфолио</td>
+                    <td></td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>ИТ-лаборатория</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:00–14:30</td>
+                    <td></td>
+                    <td>Бассейн</td>
+                    <td>Сказка</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:40–15:10</td>
+                    <td>Спортчас</td>
+                    <td></td>
+                    <td>Театр</td>
+                    <td>Логика</td>
+                    <td>Разв.игры</td>
+                </tr>
+                <tr>
+                    <td class="time-column">15:20–16:00</td>
+                    <td>Анг.яз.</td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>Анг.яз.</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="total-hours">11 часов</td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="pt" class="schedule">
+            <table>
+                <tr>
+                    <th>Время</th>
+                    <th>Понедельник</th>
+                    <th>Вторник</th>
+                    <th>Среда</th>
+                    <th>Четверг</th>
+                    <th>Пятница</th>
+                </tr>
+                <tr class="lunch-row">
+                    <td colspan="6">Обед</td>
+                </tr>
+                <tr>
+                    <td class="time-column">13:20–13:50</td>
+                    <td>Портфолио</td>
+                    <td></td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>ИТ-лаборатория</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:00–14:30</td>
+                    <td></td>
+                    <td>Бассейн</td>
+                    <td>Сказка</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td class="time-column">14:40–15:10</td>
+                    <td>Спортчас</td>
+                    <td></td>
+                    <td>Театр</td>
+                    <td>Логика</td>
+                    <td>Разв.игры</td>
+                </tr>
+                <tr>
+                    <td class="time-column">15:20–16:00</td>
+                    <td>Анг.яз.</td>
+                    <td>Тренинг развитие памяти</td>
+                    <td>Анг.яз.</td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <!-- <tr>
+                    <td colspan="6" class="total-hours">11 часов</td>
+                </tr> -->
+            </table>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2025 V labs
+    </footer>
+    
+    <script>
+        function showDay(day) {
+            // Удаляем класс 'active' у всех кнопок
+            document.querySelectorAll('.buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            // Добавляем класс 'active' нажатой кнопке
+            document.querySelector(`button[onclick="showDay('${day}')"]`).classList.add('active');
+            // Скрываем все расписания
+            document.querySelectorAll('.schedule').forEach(schedule => {
+                schedule.classList.remove('show');
+            });
+            // Показываем выбранное расписание
+            document.getElementById(day).classList.add('show');
+        }
+    </script>
+</body>
+</html>
+
